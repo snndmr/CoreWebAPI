@@ -1,31 +1,20 @@
-﻿using Contract;
-using Entities.Models;
+﻿using AutoMapper;
+using Contract;
 using Service.Contracts;
 
 namespace Service
 {
-    internal sealed class CompanyService : ICompanyService
+    public sealed class EmployeeService : IEmployeeService
     {
+        private readonly IMapper _mapper;
         private readonly ILoggerManager _logger;
         private readonly IRepositoryManager _repository;
 
-        public CompanyService(ILoggerManager logger, IRepositoryManager repository)
+        public EmployeeService(IMapper mapper, ILoggerManager logger, IRepositoryManager repository)
         {
+            _mapper = mapper;
             _logger = logger;
             _repository = repository;
-        }
-
-        public IEnumerable<Company> GetAllCompanies(bool trackChanges)
-        {
-            try
-            {
-                return _repository.Company.GetAllCompanies(trackChanges);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Something went wrong in the {nameof(GetAllCompanies)} service method {ex}");
-                throw;
-            }
         }
     }
 }

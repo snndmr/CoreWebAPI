@@ -21,6 +21,8 @@ namespace CompanyEmployees
             builder.Services.ConfigureServiceManager();
             builder.Services.ConfigureSqlContext(builder.Configuration);
 
+            builder.Services.AddAutoMapper(typeof(Program));
+
             builder.Services.AddControllers().AddApplicationPart(typeof(Presentation.AssemblyReference).Assembly);
 
             var app = builder.Build();
