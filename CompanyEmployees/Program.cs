@@ -1,4 +1,5 @@
 using CompanyEmployees.Extensions;
+using Contract;
 using Microsoft.AspNetCore.HttpOverrides;
 using NLog;
 
@@ -29,11 +30,10 @@ namespace CompanyEmployees
 
             // Configure the HTTP request pipeline.
 
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
+            var logger = app.Services.GetRequiredService<ILoggerManager>();
+            app.ConfigureExceptionHandler(logger);
+
+            if (!app.Environment.IsProduction())
             {
                 app.UseHsts();
             }
