@@ -28,6 +28,10 @@ namespace CompanyEmployees.Extensions
             services.AddScoped<IServiceManager, ServiceManager>();
 
         public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration) =>
-            services.AddNpgsql<RepositoryContext>((configuration.GetConnectionString("DefaultConnection")));
+            services.AddNpgsql<RepositoryContext>(configuration.GetConnectionString("DefaultConnection"));
+
+        public static IMvcBuilder AddCustomCsvFormatter(this IMvcBuilder builder) =>
+            builder.AddMvcOptions(config =>
+                config.OutputFormatters.Add(new CsvOutputFormatter()));
     }
 }

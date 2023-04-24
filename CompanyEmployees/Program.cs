@@ -24,7 +24,14 @@ namespace CompanyEmployees
 
             builder.Services.AddAutoMapper(typeof(Program));
 
-            builder.Services.AddControllers().AddApplicationPart(typeof(Presentation.AssemblyReference).Assembly);
+            builder.Services.AddControllers(config =>
+                {
+                    config.RespectBrowserAcceptHeader = true;
+                    config.ReturnHttpNotAcceptable = true;
+                })
+                .AddXmlDataContractSerializerFormatters()
+                .AddCustomCsvFormatter()
+                .AddApplicationPart(typeof(Presentation.AssemblyReference).Assembly);
 
             var app = builder.Build();
 
