@@ -24,6 +24,11 @@ namespace CompanyEmployees
 
             builder.Services.AddAutoMapper(typeof(Program));
 
+            //builder.Services.Configure<ApiBehaviorOptions>(options =>
+            //{
+            //    options.SuppressModelStateInvalidFilter = true;
+            //});
+
             builder.Services.AddControllers(config =>
                 {
                     config.RespectBrowserAcceptHeader = true;

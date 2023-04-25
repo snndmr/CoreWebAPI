@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Contract;
 using Entities.Exceptions;
+using Entities.Models;
 using Service.Contracts;
 using Shared.DataTransferObjects;
 
@@ -17,6 +18,16 @@ namespace Service
             _mapper = mapper;
             _logger = logger;
             _repository = repository;
+        }
+
+        public CompanyDto CreateCompany(CompanyForCreationDto companyForCreationDto)
+        {
+            var company = _mapper.Map<Company>(companyForCreationDto);
+
+            _repository.Company.CreateCompany(company);
+            _repository.Save();
+
+            return _mapper.Map<CompanyDto>(company);
         }
 
         public IEnumerable<CompanyDto> GetAllCompanies(bool trackChanges)
