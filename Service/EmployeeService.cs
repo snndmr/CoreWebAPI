@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Contract;
 using Entities.Exceptions;
+using Entities.Models;
 using Service.Contracts;
 using Shared.DataTransferObjects;
 
@@ -47,6 +48,23 @@ namespace Service
             {
                 throw new EmployeeNotFoundException(companyId, employeeId);
             }
+
+            return _mapper.Map<EmployeeDto>(employee);
+        }
+
+        public EmployeeDto CreateEmployeeForCompany(Guid companyId, EmployeeForCreationDto employeeForCreationDto, bool trackChanges)
+        {
+            var company = _repository.Company.GetCompany(companyId, false);
+
+            if (company == null)
+            {
+                throw new CompanyNotFoundException(companyId);
+            }
+
+            var employee = _mapper.Map<Employee>(employeeForCreationDto);
+
+            _repository.Employee.CreateEmployeeForCompany(companyId, employee);
+            _repository.Save();
 
             return _mapper.Map<EmployeeDto>(employee);
         }
