@@ -1,6 +1,7 @@
 using CompanyEmployees.Extensions;
 using Contract;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Mvc;
 using NLog;
 
 namespace CompanyEmployees
@@ -24,10 +25,10 @@ namespace CompanyEmployees
 
             builder.Services.AddAutoMapper(typeof(Program));
 
-            //builder.Services.Configure<ApiBehaviorOptions>(options =>
-            //{
-            //    options.SuppressModelStateInvalidFilter = true;
-            //});
+            builder.Services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
 
             builder.Services.AddControllers(config =>
                 {
