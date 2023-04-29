@@ -6,7 +6,8 @@ namespace Service.Contracts
     {
         public IEnumerable<EmployeeDto> GetAllEmployeesForCompany(Guid companyId, bool trackChanges);
         public EmployeeDto GetEmployeeForCompany(Guid companyId, Guid employeeId, bool trackChanges);
-        public EmployeeDto CreateEmployeeForCompany(Guid companyId, EmployeeForCreationDto? employeeForCreationDto, bool trackChanges);
+        public EmployeeDto CreateEmployeeForCompany(Guid companyId, EmployeeForCreationDto? employeeForCreationDto);
         public void DeleteEmployeeForCompany(Guid companyId, Guid employeeId, bool trackChanges);
+        public EmployeeDto UpdateEmployeeForCompany(Guid companyId, Guid employeeId, EmployeeForUpdateDto employeeForUpdateDto, bool trackCompanyChanges, bool trackEmployeeChanges);
     }
 }

@@ -34,7 +34,7 @@ namespace CompanyEmployees.Presentation.Controllers
                 return BadRequest("EmployeeForCreationDto is null");
             }
 
-            var employee = _serviceManager.EmployeeService.CreateEmployeeForCompany(companyId, employeeForCreationDto, false);
+            var employee = _serviceManager.EmployeeService.CreateEmployeeForCompany(companyId, employeeForCreationDto);
             return CreatedAtRoute("GetEmployeeForCompany", new { companyId, employeeId = employee.Id }, employee);
         }
 
@@ -43,6 +43,18 @@ namespace CompanyEmployees.Presentation.Controllers
         {
             _serviceManager.EmployeeService.DeleteEmployeeForCompany(companyId, employeeId, false);
             return NoContent();
+        }
+
+        [HttpPut("{employeeId:guid}")]
+        public IActionResult UpdateEmployeeForCompany(Guid companyId, Guid employeeId, [FromBody] EmployeeForUpdateDto? employeeForUpdateDto)
+        {
+            if (employeeForUpdateDto == null)
+            {
+                return BadRequest("EmployeeForUpdateDto is null");
+            }
+
+            var employee = _serviceManager.EmployeeService.UpdateEmployeeForCompany(companyId, employeeId, employeeForUpdateDto, false, true);
+            return Ok(employee);
         }
     }
 }
