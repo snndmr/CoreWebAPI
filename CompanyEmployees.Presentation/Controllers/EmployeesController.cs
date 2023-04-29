@@ -27,7 +27,7 @@ namespace CompanyEmployees.Presentation.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateEmployee(Guid companyId, [FromBody] EmployeeForCreationDto employeeForCreationDto)
+        public IActionResult CreateEmployee(Guid companyId, [FromBody] EmployeeForCreationDto? employeeForCreationDto)
         {
             if (employeeForCreationDto == null)
             {
@@ -36,6 +36,13 @@ namespace CompanyEmployees.Presentation.Controllers
 
             var employee = _serviceManager.EmployeeService.CreateEmployeeForCompany(companyId, employeeForCreationDto, false);
             return CreatedAtRoute("GetEmployeeForCompany", new { companyId, employeeId = employee.Id }, employee);
+        }
+
+        [HttpDelete("{employeeId:guid}")]
+        public IActionResult DeleteEmployeeForCompany(Guid companyId, Guid employeeId)
+        {
+            _serviceManager.EmployeeService.DeleteEmployeeForCompany(companyId, employeeId, false);
+            return NoContent();
         }
     }
 }
