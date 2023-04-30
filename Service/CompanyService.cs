@@ -20,6 +20,19 @@ namespace Service
             _repository = repository;
         }
 
+        private async Task<Company> GetCompanyAndCheckIfItExists(Guid companyId, bool trackChanges)
+        {
+            var company = await _repository.Company.GetCompany(companyId, trackChanges);
+
+            if (company == null)
+            {
+                throw new CompanyNotFoundException(companyId);
+
+            }
+
+            return company;
+        }
+
         public async Task<CompanyDto> CreateCompany(CompanyForCreationDto companyForCreationDto)
         {
             var company = _mapper.Map<Company>(companyForCreationDto);
@@ -70,7 +83,7 @@ namespace Service
 
         public async Task DeleteCompany(Guid companyId, bool trackChanges)
         {
-            var company = await _repository.Company.GetCompany(companyId, trackChanges);
+            var company = await GetCompanyAndCheckIfItExists(companyId, trackChanges);
 
             if (company == null)
             {
@@ -83,7 +96,7 @@ namespace Service
 
         public async Task UpdateCompany(Guid companyId, CompanyForUpdateDto? companyForUpdateDto, bool trackChanges)
         {
-            var company = await _repository.Company.GetCompany(companyId, trackChanges);
+            var company = await GetCompanyAndCheckIfItExists(companyId, trackChanges);
 
             if (company == null)
             {
@@ -102,7 +115,7 @@ namespace Service
 
         public async Task<CompanyDto> GetCompany(Guid companyId, bool trackChanges)
         {
-            var company = await _repository.Company.GetCompany(companyId, trackChanges);
+            var company = await GetCompanyAndCheckIfItExists(companyId, trackChanges);
             return company == null ? throw new CompanyNotFoundException(companyId) : _mapper.Map<CompanyDto>(company);
         }
     }

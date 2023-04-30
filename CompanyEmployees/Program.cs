@@ -1,4 +1,5 @@
 using CompanyEmployees.Extensions;
+using CompanyEmployees.Presentation.ActionFilters;
 using Contract;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,7 @@ namespace CompanyEmployees
             builder.Services.ConfigureRepositoryManager();
             builder.Services.ConfigureServiceManager();
             builder.Services.ConfigureSqlContext(builder.Configuration);
+            builder.Services.AddScoped<ValidationFilterAttribute>();
 
             builder.Services.AddAutoMapper(typeof(Program));
 

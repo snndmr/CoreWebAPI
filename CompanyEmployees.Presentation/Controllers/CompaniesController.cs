@@ -1,4 +1,5 @@
-﻿using CompanyEmployees.Presentation.ModelBinders;
+﻿using CompanyEmployees.Presentation.ActionFilters;
+using CompanyEmployees.Presentation.ModelBinders;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 using Shared.DataTransferObjects;
@@ -28,13 +29,9 @@ namespace CompanyEmployees.Presentation.Controllers
         }
 
         [HttpPost]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> CreateCompany([FromBody] CompanyForCreationDto? companyForCreationDto)
         {
-            if (companyForCreationDto == null)
-            {
-                return BadRequest("CompanyForCreationDto object is null");
-            }
-
             var createdCompany = await _serviceManager.CompanyService.CreateCompany(companyForCreationDto);
             return CreatedAtRoute("CompanyById", new { companyId = createdCompany.Id }, createdCompany);
         }
@@ -47,7 +44,7 @@ namespace CompanyEmployees.Presentation.Controllers
         }
 
         [HttpPost("collection")]
-        public async Task<IActionResult> GetCompanyCollection([FromBody] IEnumerable<CompanyForCreationDto>? companyForCreationDtos)
+        public async Task<IActionResult> CreateCompanyCollection([FromBody] IEnumerable<CompanyForCreationDto>? companyForCreationDtos)
         {
             if (companyForCreationDtos == null)
             {
@@ -66,13 +63,9 @@ namespace CompanyEmployees.Presentation.Controllers
         }
 
         [HttpPut("{companyId:guid}")]
-        public async Task<IActionResult> DeleteCompany(Guid companyId, [FromBody] CompanyForUpdateDto? companyForUpdateDto)
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        public async Task<IActionResult> UpdateCompany(Guid companyId, [FromBody] CompanyForUpdateDto? companyForUpdateDto)
         {
-            if (companyForUpdateDto == null)
-            {
-                return BadRequest("CompanyForUpdateDto object is null");
-            }
-
             await _serviceManager.CompanyService.UpdateCompany(companyId, companyForUpdateDto, true);
             return NoContent();
         }

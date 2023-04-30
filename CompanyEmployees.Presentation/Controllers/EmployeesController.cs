@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.JsonPatch;
+﻿using CompanyEmployees.Presentation.ActionFilters;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 using Shared.DataTransferObjects;
@@ -28,18 +29,9 @@ namespace CompanyEmployees.Presentation.Controllers
         }
 
         [HttpPost]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> CreateEmployee(Guid companyId, [FromBody] EmployeeForCreationDto? employeeForCreationDto)
         {
-            if (employeeForCreationDto == null)
-            {
-                return BadRequest("EmployeeForCreationDto is null");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return UnprocessableEntity(ModelState);
-            }
-
             var employee = await _serviceManager.EmployeeService.CreateEmployeeForCompany(companyId, employeeForCreationDto);
             return CreatedAtRoute("GetEmployeeForCompany", new { companyId, employeeId = employee.Id }, employee);
         }
@@ -52,18 +44,9 @@ namespace CompanyEmployees.Presentation.Controllers
         }
 
         [HttpPut("{employeeId:guid}")]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> UpdateEmployeeForCompany(Guid companyId, Guid employeeId, [FromBody] EmployeeForUpdateDto? employeeForUpdateDto)
         {
-            if (employeeForUpdateDto == null)
-            {
-                return BadRequest("EmployeeForUpdateDto is null");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return UnprocessableEntity(ModelState);
-            }
-
             var employee = await _serviceManager.EmployeeService.UpdateEmployeeForCompany(companyId, employeeId, employeeForUpdateDto, false, true);
             return Ok(employee);
         }
