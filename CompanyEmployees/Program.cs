@@ -2,6 +2,8 @@ using CompanyEmployees.Extensions;
 using Contract;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.Extensions.Options;
 using NLog;
 
 namespace CompanyEmployees
@@ -34,6 +36,7 @@ namespace CompanyEmployees
                 {
                     config.RespectBrowserAcceptHeader = true;
                     config.ReturnHttpNotAcceptable = true;
+                    config.InputFormatters.Insert(0, GetJsonPatchInputFormatter());
                 })
                 .AddXmlDataContractSerializerFormatters()
                 .AddCustomCsvFormatter()
@@ -109,5 +112,11 @@ namespace CompanyEmployees
 
             app.Run();
         }
+
+        private static NewtonsoftJsonPatchInputFormatter GetJsonPatchInputFormatter() =>
+            new ServiceCollection().AddLogging().AddMvc().AddNewtonsoftJson()
+                .Services.BuildServiceProvider()
+                .GetRequiredService<IOptions<MvcOptions>>().Value.InputFormatters
+                .OfType<NewtonsoftJsonPatchInputFormatter>().First();
     }
 }
