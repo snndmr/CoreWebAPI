@@ -14,66 +14,66 @@ namespace CompanyEmployees.Presentation.Controllers
         public CompaniesController(IServiceManager serviceManager) => _serviceManager = serviceManager;
 
         [HttpGet]
-        public IActionResult GetCompanies()
+        public async Task<IActionResult> GetCompanies()
         {
-            var companies = _serviceManager.CompanyService.GetAllCompanies(trackChanges: false);
+            var companies = await _serviceManager.CompanyService.GetAllCompanies(trackChanges: false);
             return Ok(companies);
         }
 
         [HttpGet("{companyId:guid}", Name = "CompanyById")]
-        public IActionResult GetCompany(Guid companyId)
+        public async Task<IActionResult> GetCompany(Guid companyId)
         {
-            var company = _serviceManager.CompanyService.GetCompany(companyId, trackChanges: false);
+            var company = await _serviceManager.CompanyService.GetCompany(companyId, trackChanges: false);
             return Ok(company);
         }
 
         [HttpPost]
-        public IActionResult CreateCompany([FromBody] CompanyForCreationDto? companyForCreationDto)
+        public async Task<IActionResult> CreateCompany([FromBody] CompanyForCreationDto? companyForCreationDto)
         {
             if (companyForCreationDto == null)
             {
                 return BadRequest("CompanyForCreationDto object is null");
             }
 
-            var createdCompany = _serviceManager.CompanyService.CreateCompany(companyForCreationDto);
+            var createdCompany = await _serviceManager.CompanyService.CreateCompany(companyForCreationDto);
             return CreatedAtRoute("CompanyById", new { companyId = createdCompany.Id }, createdCompany);
         }
 
         [HttpGet("collection/({ids})", Name = "CompanyCollection")]
-        public IActionResult GetCompanyCollection([ModelBinder(BinderType = typeof(ArrayModelBinder))] IEnumerable<Guid> ids)
+        public async Task<IActionResult> GetCompanyCollection([ModelBinder(BinderType = typeof(ArrayModelBinder))] IEnumerable<Guid> ids)
         {
-            var companies = _serviceManager.CompanyService.GetByIds(ids, false);
+            var companies = await _serviceManager.CompanyService.GetByIds(ids, false);
             return Ok(companies);
         }
 
         [HttpPost("collection")]
-        public IActionResult GetCompanyCollection([FromBody] IEnumerable<CompanyForCreationDto>? companyForCreationDtos)
+        public async Task<IActionResult> GetCompanyCollection([FromBody] IEnumerable<CompanyForCreationDto>? companyForCreationDtos)
         {
             if (companyForCreationDtos == null)
             {
                 return BadRequest("CompanyForCreationDtos object is null");
             }
 
-            var createdCompanies = _serviceManager.CompanyService.CreateCompanyCollection(companyForCreationDtos);
+            var createdCompanies = await _serviceManager.CompanyService.CreateCompanyCollection(companyForCreationDtos);
             return CreatedAtRoute("CompanyCollection", new { createdCompanies.ids }, createdCompanies.companyDtos);
         }
 
         [HttpDelete("{companyId:guid}")]
-        public IActionResult DeleteCompany(Guid companyId)
+        public async Task<IActionResult> DeleteCompany(Guid companyId)
         {
-            _serviceManager.CompanyService.DeleteCompany(companyId, false);
+            await _serviceManager.CompanyService.DeleteCompany(companyId, false);
             return NoContent();
         }
 
         [HttpPut("{companyId:guid}")]
-        public IActionResult DeleteCompany(Guid companyId, [FromBody] CompanyForUpdateDto? companyForUpdateDto)
+        public async Task<IActionResult> DeleteCompany(Guid companyId, [FromBody] CompanyForUpdateDto? companyForUpdateDto)
         {
             if (companyForUpdateDto == null)
             {
                 return BadRequest("CompanyForUpdateDto object is null");
             }
 
-            _serviceManager.CompanyService.UpdateCompany(companyId, companyForUpdateDto, true);
+            await _serviceManager.CompanyService.UpdateCompany(companyId, companyForUpdateDto, true);
             return NoContent();
         }
     }
