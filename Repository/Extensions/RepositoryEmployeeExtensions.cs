@@ -1,4 +1,6 @@
 ﻿using Entities.Models;
+using Repository.Extensions.Utility;
+using System.Linq.Dynamic.Core;
 
 namespace Repository.Extensions;
 
@@ -12,4 +14,15 @@ public static class RepositoryEmployeeExtensions
             ? employees
             : employees.Where(employee =>
                 employee.Name != null && employee.Name.ToLower().Contains(searchTerm.ToLower()));
+
+    public static IQueryable<Employee> SortEmployees(this IQueryable<Employee> employees, string? orderByQueryString)
+    {
+        if (string.IsNullOrEmpty(orderByQueryString))
+        {
+            return employees.OrderBy(e => e.Name);
+        }
+
+        var orderQuery = OrderQueryBuilder.CreateOrderQuery<Employee>(orderByQueryString);
+        return string.IsNullOrEmpty(orderQuery) ? employees.OrderBy(e => e.Name) : employees.OrderBy(orderQuery);
+    }
 }

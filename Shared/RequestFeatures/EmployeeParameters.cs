@@ -7,5 +7,7 @@
         public uint MaxAge { get; set; } = int.MaxValue;
         public bool IsValidAgeRange => MaxAge > MinAge;
         public string? SearchTerm { get; set; }
+
+        public EmployeeParameters() => OrderBy = "name";
     }
 }
