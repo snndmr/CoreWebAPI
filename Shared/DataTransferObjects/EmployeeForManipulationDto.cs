@@ -13,6 +13,6 @@ public abstract record EmployeeForManipulationDto
     public int Age { get; init; }
 
     [Required(ErrorMessage = "Position is a required field.")]
-    [MaxLength(20, ErrorMessage = "Maximum length for the 'Position' is 20 characters.")]
+    [MaxLength(50, ErrorMessage = "Maximum length for the 'Position' is 50 characters.")]
     public string? Position { get; init; }
 }

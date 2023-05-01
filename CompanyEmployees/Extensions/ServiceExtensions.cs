@@ -12,7 +12,7 @@ namespace CompanyEmployees.Extensions
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy", builder =>
-                    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+                    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().WithExposedHeaders("X-Pagination"));
             });
 
         public static void ConfigureIISIntegration(this IServiceCollection services) =>
