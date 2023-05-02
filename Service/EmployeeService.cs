@@ -5,6 +5,7 @@ using Entities.Models;
 using Service.Contracts;
 using Shared.DataTransferObjects;
 using Shared.RequestFeatures;
+using System.Dynamic;
 
 namespace Service
 {
@@ -13,12 +14,14 @@ namespace Service
         private readonly IMapper _mapper;
         private readonly ILoggerManager _logger;
         private readonly IRepositoryManager _repository;
+        private readonly IDataShaper<EmployeeDto> _dataShaper;
 
-        public EmployeeService(IMapper mapper, ILoggerManager logger, IRepositoryManager repository)
+        public EmployeeService(IMapper mapper, ILoggerManager logger, IRepositoryManager repository, IDataShaper<EmployeeDto> dataShaper)
         {
             _mapper = mapper;
             _logger = logger;
             _repository = repository;
+            _dataShaper = dataShaper;
         }
 
         private async Task CheckIfCompanyExists(Guid companyId, bool trackChanges)
@@ -50,7 +53,7 @@ namespace Service
             return employee;
         }
 
-        public async Task<(IEnumerable<EmployeeDto> employeeDtos, MetaData metaData)> GetAllEmployeesForCompany(Guid companyId, EmployeeParameters employeeParameters, bool trackChanges)
+        public async Task<(IEnumerable<ExpandoObject> employeeDtos, MetaData metaData)> GetAllEmployeesForCompany(Guid companyId, EmployeeParameters employeeParameters, bool trackChanges)
         {
             if (!employeeParameters.IsValidAgeRange)
             {
@@ -60,8 +63,9 @@ namespace Service
             await CheckIfCompanyExists(companyId, trackChanges);
             var employeesWithMetaData = await _repository.Employee.GetAllEmployeesForCompany(companyId, employeeParameters, trackChanges);
             var employeeDtos = _mapper.Map<IEnumerable<EmployeeDto>>(employeesWithMetaData);
+            var shapedEmployeeDtos = _dataShaper.ShapeData(employeeDtos, employeeParameters.Fields);
 
-            return (employeeDtos, metaData: employeesWithMetaData.MetaData);
+            return (shapedEmployeeDtos, metaData: employeesWithMetaData.MetaData);
         }
 
         public async Task<EmployeeDto> GetEmployeeForCompany(Guid companyId, Guid employeeId, bool trackChanges)
