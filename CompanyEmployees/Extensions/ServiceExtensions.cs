@@ -1,10 +1,15 @@
 ﻿using AspNetCoreRateLimit;
 using Contract;
+using Entities.Models;
 using LoggerService;
 using Marvin.Cache.Headers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 using Repository;
 using Service;
 using Service.Contracts;
+using System.Text;
 
 namespace CompanyEmployees.Extensions
 {
@@ -68,6 +73,45 @@ namespace CompanyEmployees.Extensions
             services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
             services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
             services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
+        }
+
+        public static void ConfigureIdentity(this IServiceCollection services) =>
+            services.AddIdentity<User, IdentityRole>(identityOptions =>
+                {
+                    identityOptions.Password.RequireDigit = true;
+                    identityOptions.Password.RequireLowercase = false;
+                    identityOptions.Password.RequireUppercase = false;
+                    identityOptions.Password.RequireNonAlphanumeric = false;
+                    identityOptions.Password.RequiredLength = 10;
+                    identityOptions.User.RequireUniqueEmail = true;
+                })
+                .AddEntityFrameworkStores<RepositoryContext>()
+                .AddDefaultTokenProviders();
+
+        public static void ConfigureJWT(this IServiceCollection services, IConfiguration
+            configuration)
+        {
+            var jwtSettings = configuration.GetSection("JwtSettings");
+            var secretKey = Environment.GetEnvironmentVariable("SECRET");
+            services.AddAuthentication(opt =>
+                {
+                    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = jwtSettings["validIssuer"],
+                        ValidAudience = jwtSettings["validAudience"],
+                        IssuerSigningKey = new
+                            SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+                    };
+                });
         }
     }
 }

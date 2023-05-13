@@ -1,5 +1,6 @@
 ﻿using CompanyEmployees.Presentation.ActionFilters;
 using CompanyEmployees.Presentation.ModelBinders;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 using Shared.DataTransferObjects;
@@ -15,6 +16,7 @@ namespace CompanyEmployees.Presentation.Controllers
         public CompaniesController(IServiceManager serviceManager) => _serviceManager = serviceManager;
 
         [HttpGet]
+        [Authorize(Roles = "Manager")]
         [ResponseCache(CacheProfileName = "30SecondsDuration")]
         public async Task<IActionResult> GetCompanies()
         {

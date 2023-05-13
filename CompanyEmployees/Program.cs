@@ -35,6 +35,9 @@ namespace CompanyEmployees
             builder.Services.AddMemoryCache();
             builder.Services.ConfigureRateLimitingOptions();
             builder.Services.AddHttpContextAccessor();
+            builder.Services.AddAuthentication();
+            builder.Services.ConfigureIdentity();
+            builder.Services.ConfigureJWT(builder.Configuration);
 
             builder.Services.AddAutoMapper(typeof(Program));
 
@@ -79,7 +82,7 @@ namespace CompanyEmployees
             app.UseCors("CorsPolicy");
             app.UseResponseCaching();
             app.UseHttpCacheHeaders();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             // To observe middleware logic.
