@@ -1,4 +1,5 @@
-﻿using Contract;
+﻿using AspNetCoreRateLimit;
+using Contract;
 using LoggerService;
 using Marvin.Cache.Headers;
 using Repository;
@@ -49,5 +50,24 @@ namespace CompanyEmployees.Extensions
                 {
                     validationOptions.MustRevalidate = true;
                 });
+
+        public static void ConfigureRateLimitingOptions(this IServiceCollection services)
+        {
+            var rateLimitRules = new List<RateLimitRule>
+            {
+                new()
+                {
+                    Endpoint = "*",
+                    Limit = 5,
+                    Period = "1m"
+                }
+            };
+
+            services.Configure<IpRateLimitOptions>(opt => { opt.GeneralRules = rateLimitRules; });
+            services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+            services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
+            services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+            services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
+        }
     }
 }
