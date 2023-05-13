@@ -15,6 +15,7 @@ namespace CompanyEmployees.Presentation.Controllers
         public CompaniesController(IServiceManager serviceManager) => _serviceManager = serviceManager;
 
         [HttpGet]
+        [ResponseCache(CacheProfileName = "30SecondsDuration")]
         public async Task<IActionResult> GetCompanies()
         {
             var companies = await _serviceManager.CompanyService.GetAllCompanies(trackChanges: false);
@@ -22,6 +23,7 @@ namespace CompanyEmployees.Presentation.Controllers
         }
 
         [HttpGet("{companyId:guid}", Name = "CompanyById")]
+        [ResponseCache(Duration = 60)]
         public async Task<IActionResult> GetCompany(Guid companyId)
         {
             var company = await _serviceManager.CompanyService.GetCompany(companyId, trackChanges: false);

@@ -29,6 +29,8 @@ namespace CompanyEmployees
             builder.Services.ConfigureSqlContext(builder.Configuration);
             builder.Services.AddScoped<ValidationFilterAttribute>();
             builder.Services.AddScoped<IDataShaper<EmployeeDto>, DataShaper<EmployeeDto>>();
+            builder.Services.ConfigureResponseCaching();
+            builder.Services.ConfigureHttpCacheHeaders();
 
             builder.Services.AddAutoMapper(typeof(Program));
 
@@ -42,6 +44,7 @@ namespace CompanyEmployees
                     config.RespectBrowserAcceptHeader = true;
                     config.ReturnHttpNotAcceptable = true;
                     config.InputFormatters.Insert(0, GetJsonPatchInputFormatter());
+                    config.CacheProfiles.Add("30SecondsDuration", new CacheProfile { Duration = 30 });
                 })
                 .AddXmlDataContractSerializerFormatters()
                 .AddCustomCsvFormatter()
@@ -69,6 +72,8 @@ namespace CompanyEmployees
             });
 
             app.UseCors("CorsPolicy");
+            app.UseResponseCaching();
+            app.UseHttpCacheHeaders();
 
             app.UseAuthorization();
 
